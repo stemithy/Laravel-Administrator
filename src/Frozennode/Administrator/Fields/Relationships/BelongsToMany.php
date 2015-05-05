@@ -93,6 +93,8 @@ class BelongsToMany extends Relationship {
 		$table = $this->getOption('table');
 		$column = $this->getOption('column');
 		$column2 = $this->getOption('column2');
+		//stemithy - for inclusive filter
+		$inclusive = false;
 
 		//if there is no value, return
 		if (!$value)
@@ -111,8 +113,13 @@ class BelongsToMany extends Relationship {
 		//add where clause
 		$query->whereIn($column2, $value);
 
-		//add having clauses
-		$query->havingRaw('COUNT(DISTINCT ' . $query->getConnection()->getTablePrefix() . $column2 . ') = ' . count($value));
+		//stemithy - add having clauses if filter is not inclusive
+		if(isset($this->userOptions['inclusive'])) {
+			$inclusive = $this->getOption('inclusive');
+		}
+		if(!$inclusive) {
+			$query->havingRaw('COUNT(DISTINCT ' . $query->getConnection()->getTablePrefix() . $column2 . ') = ' . count($value));
+		}
 
 		//add select field
 		if ($selects && !in_array($column2, $selects))
