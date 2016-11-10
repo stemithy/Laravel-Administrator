@@ -66,8 +66,21 @@ class BelongsToMany extends Relationship {
 		}
 		else
 		{
-			//elsewise the order doesn't matter, so use sync
-			$relationship->sync($input);
+			$options = $this->getOptions();
+			if (isset($options['pivot_defaults']))
+			{
+				// we have some extra information to pass to sync
+				// do not use sync, we use attach
+				$relationship->sync([]); // remove everything...
+				foreach($input as $id){
+					$relationship->attach($id, $options['pivot_defaults']);
+				}
+			}
+			else
+			{
+				//elsewise the order doesn't matter, so use sync
+				$relationship->sync($input);
+			}
 		}
 
 		//unset the attribute on the model
