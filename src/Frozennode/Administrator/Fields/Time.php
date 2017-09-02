@@ -83,6 +83,15 @@ class Time extends Field {
 			//fill the model with the correct date/time format
 			$model->{$this->getOption('field_name')} = $this->getDateString($time);
 		}
+		else
+		{
+			if (empty($input))
+			{
+				// let users delete a date or time field by blankig it out
+				$model->{$this->getOption('field_name')} = "";
+			}
+
+		}
 	}
 
 	/**
